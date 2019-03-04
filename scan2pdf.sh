@@ -37,7 +37,15 @@ debug "start scan"
 scanimage --device-name "${DEVICE_NAME}" \
     --source "${DEVICE_SOURCE}" \
     ${SCAN_OPTIONS} \
-    --batch=scan_%03d.tif --format=tiff
+    --batch=scan_%03d.tif --format=tiff > /dev/null 2>&1 &
+PID=$!
+
+if [[ "${DEMAND_FILENAME}" == "true" ]]; then
+    read -p "Enter filename: " BASE_FILENAME
+    FILE_NAME=${DIR_SCAN}/${BASE_FILENAME}_`date +%Y%m%d-%H%M%S`
+
+    wait $PID
+fi
 
 if [ -f scan_001.tif ]; then
     ls -l scan_*.tif
